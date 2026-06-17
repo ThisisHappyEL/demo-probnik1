@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Список товаров</title>
+  <style>
+    body {
+      font-family: "Comic Sans MS"; 
+      background-color: #FFFFFF;  
+    }
+    header {
+      background-color: #ABCFCE; 
+      padding: 10px;
+    }
+    .accent-btn {
+      background-color: #546F94; 
+      color: white; 
+    }
+    .discount-high {
+      background-color: #2E8B57; /* Скидка > 15% (по заданию) */
+    }
+    .no-stock {
+      background-color: #87CEEB; /* Товара нет на складе - голубой цвет (по заданию) */
+    }
+    .old-price {
+      color: red; 
+      text-decoration: line-through; 
+    }
+    .current-price {
+      color: black; 
+      font-weight: bold; 
+    }
+    .card {
+      border: 1px solid black;
+      margin-bottom: 10px;
+      padding: 10px;
+      display: flex; /* Чтобы картинка и текст были рядом */
+      gap: 15px;
+    }
+  </style>
+</head>
+<body> 
+  <header>
+    <img src="/static/icon.png" height="100">
+    <h2>ООО "ЧитайГород"</h2> 
+    <div>
+      <span>{{ fio }} - {{ role }}</span>
+      <a href="{% url 'logout_page' %}">Выйти</a>
+    </div>
+  </header>
+
+  <div style="margin: 20px;">
+    <!-- Форма поиска и сортировки -->
+     <form method="get" action="" id="filterForm" onchange="this.submit()">
+       <input
+          type="text"
+          name="search"
+          id="searchInput"
+          value="{{ search_val }}"
+          placeholder="Поиск..."
+          oninput="this.form.submit()">
+
+          <select name="sort">
+            <option value="">Без сортировки</option>
+            <option value="asc" {% if sort_val == 'asc'%}selected{% endif %}>Количество по возрастанию</option>
+            <option value="desc" {% if sort_val == 'desc' %}selected{% endif %}>Количество по убыванию</option>
+          </select>
+     </form>
+
+     <div style="margin-top: 20px;">
+      {% for product in products %}
+      <!-- Логика раскраски: сначала проверяем 0, потом скидку > 15% -->
+       <div class="card
+            {% if product.quantity_in_stock == 0 %} no-stock
+            {% elif product.discount > 15 %} discount-high
+            {% endif %}">
+          
+          <img src="/static/{% if product.photo %}{{ product.photo }}{% else %}picture.jpg{% endif %}" width="120" height="150">
+          
+          <div>
+            <h3> {{ product.name }} </h3>
+            <p> Описание: {{ product.description }}</p>
+            <p> Категория: {{ product.category.name }}</p>
+            <p> Производитель: {{ product.producer.name }}</p>
+            <p> Поставщик: {{ product.provider.name }}</p>
+            <p> На складе: {{ product.quantity_in_stock }} {{ product.unit.name }}</p> <!-- исправил unit_id.name на unit.name -->
+            <p> Цена:
+              {% if product.discount and product.discount > 0 %}
+                <span class="old-price">{{ product.price }} руб.</span>
+                <span class="current-price">{{ product.final_price|floatformat:2 }} руб.</span>
+              {% else %}
+                <span class="current-price">{{ product.final_price|floatformat:2 }} руб.</span>
+              {% endif %}
+            </p>
+            <p>Скидка: {{ product.discount|default:0 }} %</p>
+          </div>
+        </div>
+        {% endfor %}
+     </div>
+  </div>
+
+<script>
+  // Скрипт, чтобы курсор не пропадал при поиске
+  var input = document.getElementById('searchInput');
+  if (input) {
+      input.focus();
+      input.setSelectionRange(input.value.length, input.value.length);
+  }
+</script>
+</body>
+</html>

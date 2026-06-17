@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,26 +12,27 @@
         }
         .accent-btn {
           background-color: #546F94;
+          color: white;
           cursor: pointer;
         }
     </style>
 </head>
 <body>
   <img src="/static/icon.png" height="100">
-  <h1>ООО "ЧитайГород"</h1>
-  <!-- Если в views.py мы передали ошибку (неверный пароль), она покажется тут -->
-   <p style="color: red;"> {{ error }} </p>
-   <!-- Форма отправляет данные (POST) в ту же функцию, где мы сейчас находимся -->
-    <form method="post">
-      {% csrf_token %} <!-- Защитный токен Джанго, без него форма не отправится -->
+  <h1>ООО "ЧитайГород"</h1> <!-- Можно оставить, раз просили игнорировать обувь -->
+  
+  <!-- Если в views.py мы передали ошибку, она покажется тут -->
+  <p style="color: red;"> {{ error }} </p>
+  
+  <form method="post">
+      {% csrf_token %}
       <p><input type="text" name="login" placeholder="Почта" required></p>
-      <p><input type = "password" name="passwrod" placeholder="Пароль" required></p>
+      <!-- ИСПРАВЛЕНА ОПЕЧАТКА: passwrod -> password -->
+      <p><input type="password" name="password" placeholder="Пароль" required></p>
 
       <p><button type="submit" class="accent-btn">Войти</button></p>
-      <!-- Кнопка "Войти как гость" передает параметр guest -->
-       <p><button type="submit" name="quest" value="1" formnovalidate>Войти как гость</button></p>
-       <!-- Для почты и пароля надо бы поставить required, но если сделать это, то не получится войти как гостю. Решения 2:-->
-        <!-- 1 - Не добавлять required. 2 - указать кнопке входа в качестве гостя formnovalidate -->
-    </form>
+      <!-- ИСПРАВЛЕНА ОПЕЧАТКА: quest -> guest -->
+      <p><button type="submit" name="guest" value="1" formnovalidate>Войти как гость</button></p>
+  </form>
 </body>
 </html>
